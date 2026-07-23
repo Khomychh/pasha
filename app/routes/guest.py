@@ -79,11 +79,11 @@ async def chat_api(request: Request, pasha_session: str | None = Cookie(default=
             status_code=429,
         )
 
-    persona_text = persona.get_persona()
+    system_instruction = persona.build_system_instruction()
 
     async def generate():
         try:
-            async for chunk in gemini_client.stream_reply(persona_text, history, message):
+            async for chunk in gemini_client.stream_reply(system_instruction, history, message):
                 yield chunk
         except Exception:
             logger.exception("Gemini stream failed")

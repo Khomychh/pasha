@@ -459,6 +459,17 @@ a {
   font-size: 0.9rem;
 }
 
+.admin-card h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 32px 0 4px;
+}
+
+.admin-card .phrases-textarea {
+  min-height: 140px;
+}
+
 .admin-card textarea {
   width: 100%;
   min-height: 320px;

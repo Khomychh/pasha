@@ -50,7 +50,11 @@ async def admin_logout():
 async def admin_page(request: Request, pasha_admin_session: str | None = Cookie(default=None)):
     if not security.read_admin_sid(pasha_admin_session):
         return RedirectResponse("/admin/login", status_code=303)
-    return templates.TemplateResponse(request, "admin.html", {"persona_text": persona.get_persona()})
+    return templates.TemplateResponse(
+        request,
+        "admin.html",
+        {"persona_text": persona.get_persona(), "phrases_text": persona.get_phrases()},
+    )
 
 
 @router.put("/api/persona")
@@ -64,4 +68,16 @@ async def update_persona(request: Request, pasha_admin_session: str | None = Coo
         return JSONResponse({"error": "Текст персони не може бути порожнім"}, status_code=400)
 
     persona.set_persona(text)
+    return JSONResponse({"ok": True})
+
+
+@router.put("/api/phrases")
+async def update_phrases(request: Request, pasha_admin_session: str | None = Cookie(default=None)):
+    if not security.read_admin_sid(pasha_admin_session):
+        return JSONResponse({"error": "Не авторизовано"}, status_code=401)
+
+    body = await request.json()
+    text = (body.get("text") or "").strip()
+
+    persona.set_phrases(text)
     return JSONResponse({"ok": True})

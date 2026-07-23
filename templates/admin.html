@@ -26,6 +26,18 @@
         <button id="save-btn" type="button">Зберегти</button>
         <span class="admin-status" id="status"></span>
       </div>
+
+      <h2>Слова і фрази Паші</h2>
+      <p class="tagline">
+        Окремі слова, вирази чи улюблені фразочки, якими Паша говорить.
+        По одному в рядок або через кому — модель врахує їх у відповідях.
+      </p>
+      <textarea id="phrases-text" class="phrases-textarea">{{ phrases_text }}</textarea>
+      <div class="admin-actions">
+        <button id="save-phrases-btn" type="button">Зберегти</button>
+        <span class="admin-status" id="phrases-status"></span>
+      </div>
+
       <p class="admin-footer">
         <a href="/admin/logout" onclick="return false" id="admin-logout-link">вийти з адмінки</a>
       </p>

@@ -24,10 +24,18 @@ DEFAULT_PERSONA = """\
 """
 
 
-def _path() -> Path:
-    path = Path(settings.persona_path)
+def _resolve(raw_path: str) -> Path:
+    path = Path(raw_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def _path() -> Path:
+    return _resolve(settings.persona_path)
+
+
+def _phrases_path() -> Path:
+    return _resolve(settings.phrases_path)
 
 
 def get_persona() -> str:
@@ -40,3 +48,23 @@ def get_persona() -> str:
 def set_persona(text: str) -> None:
     with _lock:
         _path().write_text(text, encoding="utf-8")
+
+
+def get_phrases() -> str:
+    path = _phrases_path()
+    if not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8")
+
+
+def set_phrases(text: str) -> None:
+    with _lock:
+        _phrases_path().write_text(text, encoding="utf-8")
+
+
+def build_system_instruction() -> str:
+    text = get_persona()
+    phrases = get_phrases().strip()
+    if phrases:
+        text = f"{text}\n\n## Слова та фрази, які ти вживаш\n{phrases}\n"
+    return text
