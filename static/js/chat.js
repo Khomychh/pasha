@@ -9,8 +9,12 @@
   /** @type {{role: "user" | "model", text: string}[]} */
   const history = [];
 
-  function scrollToBottom() {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+  function scrollToBottom(smooth = false) {
+    if (smooth) {
+      messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: "smooth" });
+    } else {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
   }
 
   function addBubble(role, text) {
@@ -18,7 +22,7 @@
     bubble.className = "bubble " + (role === "user" ? "guest" : "persona");
     bubble.textContent = text;
     messagesEl.appendChild(bubble);
-    scrollToBottom();
+    scrollToBottom(true);
     return bubble;
   }
 
@@ -27,7 +31,7 @@
     notice.className = "chat-notice";
     notice.textContent = text;
     messagesEl.appendChild(notice);
-    scrollToBottom();
+    scrollToBottom(true);
   }
 
   function addTypingIndicator() {
@@ -35,7 +39,7 @@
     el.className = "typing";
     el.innerHTML = "<span></span><span></span><span></span>";
     messagesEl.appendChild(el);
-    scrollToBottom();
+    scrollToBottom(true);
     return el;
   }
 
