@@ -46,6 +46,10 @@ body.chat-page {
   width: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  /* Compensate for iOS Safari panning the visual viewport up when the
+     keyboard opens, which otherwise drags this fixed body (and the header
+     inside it) off the top of the screen. Kept at 0 by default/JS fallback. */
+  transform: translateY(var(--vv-offset-top, 0px));
 }
 
 a {
@@ -179,6 +183,11 @@ a {
 .chat-screen {
   height: 100vh;
   height: 100svh;
+  /* When the on-screen keyboard opens, the visual viewport shrinks but
+     100svh does not, so the header would stay pushed off-screen. --vv-height
+     (set from JS via the visualViewport API) tracks the real visible
+     height so the header + composer always stay on screen. */
+  height: var(--vv-height, 100svh);
   display: flex;
   flex-direction: column;
   max-width: 720px;
