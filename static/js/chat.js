@@ -1,16 +1,14 @@
 (() => {
-  // Keep the chat screen's height and vertical offset synced to the real
-  // visible viewport, so the header stays on screen when the mobile
-  // keyboard opens (iOS Safari pans the page instead of resizing it).
+  // Keep the chat screen's height synced to the real visible viewport, so
+  // the header and composer both stay on screen when the mobile keyboard
+  // opens (100svh doesn't shrink for the keyboard on its own).
   const vv = window.visualViewport;
   if (vv) {
-    const syncViewportVars = () => {
+    const syncViewportHeight = () => {
       document.documentElement.style.setProperty("--vv-height", `${vv.height}px`);
-      document.documentElement.style.setProperty("--vv-offset-top", `${vv.offsetTop}px`);
     };
-    vv.addEventListener("resize", syncViewportVars);
-    vv.addEventListener("scroll", syncViewportVars);
-    syncViewportVars();
+    vv.addEventListener("resize", syncViewportHeight);
+    syncViewportHeight();
   }
 
   const messagesEl = document.getElementById("messages");

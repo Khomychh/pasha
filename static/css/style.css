@@ -46,10 +46,6 @@ body.chat-page {
   width: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-  /* Compensate for iOS Safari panning the visual viewport up when the
-     keyboard opens, which otherwise drags this fixed body (and the header
-     inside it) off the top of the screen. Kept at 0 by default/JS fallback. */
-  transform: translateY(var(--vv-offset-top, 0px));
 }
 
 a {
