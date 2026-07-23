@@ -1,0 +1,51 @@
+# Manual smoke tests. Run `uvicorn main:app --reload` first and fill in .env.
+# Login requests store the session cookie for reuse in later requests.
+
+### Guest login page
+GET http://127.0.0.1:8000/
+Accept: text/html
+
+###
+
+### Guest login (sets pasha_session cookie)
+POST http://127.0.0.1:8000/login
+Content-Type: application/x-www-form-urlencoded
+
+password=REPLACE_WITH_GUEST_PASSWORD
+
+###
+
+### Chat page (requires cookie from login above)
+GET http://127.0.0.1:8000/chat
+Accept: text/html
+
+###
+
+### Send a chat message (streams back plain text)
+POST http://127.0.0.1:8000/api/chat
+Content-Type: application/json
+
+{
+  "history": [],
+  "message": "Привіт!"
+}
+
+###
+
+### Admin login (sets pasha_admin_session cookie)
+POST http://127.0.0.1:8000/admin/login
+Content-Type: application/x-www-form-urlencoded
+
+password=REPLACE_WITH_ADMIN_PASSWORD
+
+###
+
+### Update persona text
+PUT http://127.0.0.1:8000/admin/api/persona
+Content-Type: application/json
+
+{
+  "text": "Тебе звати Паша. Ти..."
+}
+
+###

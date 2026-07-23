@@ -16,6 +16,9 @@ env/
 # Environment variables
 .env
 
+# Runtime persona data (may contain personal content, never committed)
+data/
+
 # IDE
 .idea/
 .vscode/

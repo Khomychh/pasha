@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Паша — адмін</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="admin-screen">
+    <div class="admin-card">
+      <h1>Профіль Паші</h1>
+      <p class="tagline">
+        Цей текст визначає, як штучний інтелект поводиться в чаті з
+        гостями. Пиши від першої особи — характер, звички, факти про
+        себе, манеру спілкування.
+      </p>
+      <textarea id="persona-text">{{ persona_text }}</textarea>
+      <div class="admin-actions">
+        <button id="save-btn" type="button">Зберегти</button>
+        <span class="admin-status" id="status"></span>
+      </div>
+      <p class="admin-footer">
+        <a href="/admin/logout" onclick="return false" id="admin-logout-link">вийти з адмінки</a>
+      </p>
+    </div>
+  </div>
+
+  <form id="admin-logout-form" method="post" action="/admin/logout" style="display: none"></form>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Паша</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="auth-screen">
+    <div class="auth-card lamp-glow">
+      <h1>Паша</h1>
+      <p class="tagline">хтось є вдома...</p>
+      <form class="auth-form" method="post" action="/login">
+        {% if error %}
+        <p class="auth-error">{{ error }}</p>
+        {% endif %}
+        <input
+          type="password"
+          name="password"
+          placeholder="пароль"
+          autofocus
+          required
+        />
+        <button type="submit">Зайти</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+pasha.ivankhomych.com {
+    reverse_proxy app:8000
+}
