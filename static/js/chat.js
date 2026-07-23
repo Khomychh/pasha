@@ -2,16 +2,25 @@
   // Keep the chat screen's height synced to the real visible viewport, so
   // the header and composer both stay on screen when the mobile keyboard
   // opens (100svh doesn't shrink for the keyboard on its own).
+  const messagesEl = document.getElementById("messages");
+
   const vv = window.visualViewport;
   if (vv) {
     const syncViewportHeight = () => {
       document.documentElement.style.setProperty("--vv-height", `${vv.height}px`);
+      // Keyboard open/close resizes the flex layout; keep the view pinned
+      // to the latest message instead of drifting away from it.
+      scrollToBottom();
     };
     vv.addEventListener("resize", syncViewportHeight);
     syncViewportHeight();
   }
 
-  const messagesEl = document.getElementById("messages");
+  // If the page is restored from bfcache (e.g. mobile back-navigation),
+  // browsers don't reliably restore the .messages scroll position, which
+  // otherwise leaves the view stuck at the oldest message.
+  window.addEventListener("pageshow", () => scrollToBottom());
+
   const composer = document.getElementById("composer");
   const input = document.getElementById("input");
   const sendBtn = document.getElementById("send-btn");
@@ -67,6 +76,14 @@
     }
   });
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
   composer.addEventListener("submit", async (event) => {
     event.preventDefault();
     const message = input.value.trim();
@@ -77,6 +94,9 @@
     input.style.height = "auto";
     sendBtn.disabled = true;
 
+    // A short human-like beat before Pasha "notices" the message, so the
+    // typing indicator doesn't pop up the instant you hit send.
+    await sleep(randomBetween(400, 900));
     const typingEl = addTypingIndicator();
 
     try {
@@ -94,23 +114,49 @@
         return;
       }
 
-      typingEl.remove();
-      const replyBubble = addBubble("model", "");
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let fullText = "";
+      let buffer = "";
+      let doneReading = false;
+      let replyBubble = null;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        fullText += chunk;
-        replyBubble.textContent = fullText;
-        scrollToBottom();
+      async function readStream() {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+        }
+        doneReading = true;
+      }
+
+      // Reveal the streamed text at a typing-like pace instead of dumping
+      // whole chunks the instant they arrive, so replies feel less instant.
+      async function revealStream() {
+        let shown = "";
+        while (!doneReading || shown.length < buffer.length) {
+          if (shown.length < buffer.length) {
+            if (!replyBubble) {
+              typingEl.remove();
+              replyBubble = addBubble("model", "");
+            }
+            const behind = buffer.length - shown.length;
+            const step = behind > 200 ? Math.ceil(behind / 20) : behind > 40 ? 3 : 1;
+            shown = buffer.slice(0, shown.length + step);
+            replyBubble.textContent = shown;
+            scrollToBottom();
+          }
+          await sleep(randomBetween(18, 40));
+        }
+      }
+
+      await Promise.all([readStream(), revealStream()]);
+
+      if (!replyBubble) {
+        typingEl.remove();
       }
 
       history.push({ role: "user", text: message });
-      history.push({ role: "model", text: fullText });
+      history.push({ role: "model", text: buffer });
     } catch (err) {
       typingEl.remove();
       addNotice("Не вдалося зв'язатись із Пашею. Перевір з'єднання.");
