@@ -1,7 +1,13 @@
+import io
 import threading
 from pathlib import Path
 
+from PIL import Image, ImageOps
+
 from app.config import settings
+
+AVATAR_MAX_DIMENSION = 640
+AVATAR_JPEG_QUALITY = 85
 
 _lock = threading.Lock()
 
@@ -93,8 +99,16 @@ def get_photo_version() -> int:
 
 
 def save_avatar(data: bytes) -> None:
+    image = Image.open(io.BytesIO(data))
+    image = ImageOps.exif_transpose(image)
+    image = image.convert("RGB")
+    image.thumbnail((AVATAR_MAX_DIMENSION, AVATAR_MAX_DIMENSION), Image.LANCZOS)
+
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", quality=AVATAR_JPEG_QUALITY, optimize=True)
+
     with _lock:
-        _avatar_path().write_bytes(data)
+        _avatar_path().write_bytes(buffer.getvalue())
 
 
 def build_system_instruction() -> str:
