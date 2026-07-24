@@ -21,6 +21,8 @@ class Settings:
         self.secret_key = _require("SECRET_KEY")
         self.persona_path = os.environ.get("PERSONA_PATH", "data/persona.txt")
         self.phrases_path = os.environ.get("PHRASES_PATH", "data/phrases.txt")
+        self.name_path = os.environ.get("NAME_PATH", "data/name.txt")
+        self.avatar_path = os.environ.get("AVATAR_PATH", "static/img/pasha.jpg")
 
         self.rate_limit_max_messages = int(os.environ.get("RATE_LIMIT_MAX_MESSAGES", "60"))
         self.rate_limit_window_seconds = int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", str(60 * 60)))

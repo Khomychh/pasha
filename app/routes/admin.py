@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import APIRouter, Cookie, Form, Request
+from fastapi import APIRouter, Cookie, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -53,8 +53,49 @@ async def admin_page(request: Request, pasha_admin_session: str | None = Cookie(
     return templates.TemplateResponse(
         request,
         "admin.html",
-        {"persona_text": persona.get_persona(), "phrases_text": persona.get_phrases()},
+        {
+            "persona_text": persona.get_persona(),
+            "phrases_text": persona.get_phrases(),
+            "name_text": persona.get_name(),
+            "photo_version": persona.get_photo_version(),
+        },
     )
+
+
+ALLOWED_PHOTO_TYPES = {"image/jpeg", "image/png", "image/webp"}
+MAX_PHOTO_SIZE = 5 * 1024 * 1024
+
+
+@router.put("/api/name")
+async def update_name(request: Request, pasha_admin_session: str | None = Cookie(default=None)):
+    if not security.read_admin_sid(pasha_admin_session):
+        return JSONResponse({"error": "Не авторизовано"}, status_code=401)
+
+    body = await request.json()
+    text = (body.get("text") or "").strip()
+    if not text:
+        return JSONResponse({"error": "Ім'я не може бути порожнім"}, status_code=400)
+
+    persona.set_name(text)
+    return JSONResponse({"ok": True})
+
+
+@router.post("/api/photo")
+async def update_photo(
+    file: UploadFile = File(...), pasha_admin_session: str | None = Cookie(default=None)
+):
+    if not security.read_admin_sid(pasha_admin_session):
+        return JSONResponse({"error": "Не авторизовано"}, status_code=401)
+
+    if file.content_type not in ALLOWED_PHOTO_TYPES:
+        return JSONResponse({"error": "Дозволені формати: JPG, PNG, WEBP"}, status_code=400)
+
+    data = await file.read()
+    if len(data) > MAX_PHOTO_SIZE:
+        return JSONResponse({"error": "Файл завеликий (максимум 5 МБ)"}, status_code=400)
+
+    persona.save_avatar(data)
+    return JSONResponse({"ok": True, "photo_version": persona.get_photo_version()})
 
 
 @router.put("/api/persona")

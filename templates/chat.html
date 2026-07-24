@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
   />
-  <title>Паша</title>
+  <title>{{ name }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -18,9 +18,9 @@
 <body class="chat-page">
   <div class="chat-screen">
     <header class="chat-header">
-      <div class="avatar"><img src="/static/img/pasha.jpg" alt="Паша" /></div>
+      <div class="avatar"><img src="/static/img/pasha.jpg?v={{ photo_version }}" alt="{{ name }}" /></div>
       <div class="chat-header-text">
-        <span class="name">Паша</span>
+        <span class="name">{{ name }}</span>
         <span class="status"><span class="status-dot"></span>у апарата</span>
       </div>
       <a class="logout-link" href="/logout" onclick="return false" id="logout-link">вийти</a>

@@ -38,6 +38,14 @@ def _phrases_path() -> Path:
     return _resolve(settings.phrases_path)
 
 
+def _name_path() -> Path:
+    return _resolve(settings.name_path)
+
+
+def _avatar_path() -> Path:
+    return _resolve(settings.avatar_path)
+
+
 def get_persona() -> str:
     path = _path()
     if not path.exists():
@@ -60,6 +68,33 @@ def get_phrases() -> str:
 def set_phrases(text: str) -> None:
     with _lock:
         _phrases_path().write_text(text, encoding="utf-8")
+
+
+DEFAULT_NAME = "Паша"
+
+
+def get_name() -> str:
+    path = _name_path()
+    if not path.exists():
+        path.write_text(DEFAULT_NAME, encoding="utf-8")
+    return path.read_text(encoding="utf-8").strip() or DEFAULT_NAME
+
+
+def set_name(text: str) -> None:
+    with _lock:
+        _name_path().write_text(text, encoding="utf-8")
+
+
+def get_photo_version() -> int:
+    path = _avatar_path()
+    if not path.exists():
+        return 0
+    return int(path.stat().st_mtime)
+
+
+def save_avatar(data: bytes) -> None:
+    with _lock:
+        _avatar_path().write_bytes(data)
 
 
 def build_system_instruction() -> str:

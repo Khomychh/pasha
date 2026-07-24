@@ -35,6 +35,52 @@
     });
   }
 
+  function wirePhotoUpload() {
+    const input = document.getElementById("photo-input");
+    const preview = document.getElementById("photo-preview");
+    const status = document.getElementById("photo-status");
+
+    input.addEventListener("change", async () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      status.textContent = "Завантажую...";
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/admin/api/photo", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          status.textContent = data.error || "Не вдалося завантажити.";
+        } else {
+          preview.src = `/static/img/pasha.jpg?v=${data.photo_version}`;
+          status.textContent = "Завантажено ✓";
+          setTimeout(() => {
+            status.textContent = "";
+          }, 2500);
+        }
+      } catch (err) {
+        status.textContent = "Не вдалося завантажити. Перевір з'єднання.";
+      } finally {
+        input.value = "";
+      }
+    });
+  }
+
+  wireSave({
+    textareaId: "name-input",
+    buttonId: "save-name-btn",
+    statusId: "name-status",
+    endpoint: "/admin/api/name",
+  });
+
+  wirePhotoUpload();
+
   wireSave({
     textareaId: "persona-text",
     buttonId: "save-btn",

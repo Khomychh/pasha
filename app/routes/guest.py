@@ -19,7 +19,9 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 async def login_page(request: Request, pasha_session: str | None = Cookie(default=None)):
     if security.read_guest_sid(pasha_session):
         return RedirectResponse("/chat", status_code=303)
-    return templates.TemplateResponse(request, "login.html", {"error": None})
+    return templates.TemplateResponse(
+        request, "login.html", {"error": None, "name": persona.get_name()}
+    )
 
 
 @router.post("/login")
@@ -52,7 +54,11 @@ async def logout():
 async def chat_page(request: Request, pasha_session: str | None = Cookie(default=None)):
     if not security.read_guest_sid(pasha_session):
         return RedirectResponse("/", status_code=303)
-    return templates.TemplateResponse(request, "chat.html", {})
+    return templates.TemplateResponse(
+        request,
+        "chat.html",
+        {"name": persona.get_name(), "photo_version": persona.get_photo_version()},
+    )
 
 
 @router.post("/api/chat")

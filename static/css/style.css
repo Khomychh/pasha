@@ -470,6 +470,62 @@ a {
   min-height: 140px;
 }
 
+.admin-card input[type="text"] {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.admin-card input[type="text"]:focus-visible {
+  border-color: var(--amber);
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+}
+
+.admin-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 32px 0 24px;
+}
+
+.admin-photo-preview {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--coral), var(--amber));
+}
+
+.admin-photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-file-label {
+  background: var(--amber);
+  color: #241a0a;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  display: inline-block;
+}
+
+.admin-file-label:hover {
+  background: #ffbb52;
+}
+
 .admin-card textarea {
   width: 100%;
   min-height: 320px;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Паша — адмін</title>
+  <title>{{ name_text }} — адмін</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -16,6 +16,26 @@
   <div class="admin-screen">
     <div class="admin-card">
       <h1>Профіль Паші</h1>
+
+      <h2>Ім'я та фото</h2>
+      <p class="tagline">Як звати персонажа і яке фото показувати в чаті.</p>
+      <input type="text" id="name-input" value="{{ name_text }}" maxlength="40" />
+      <div class="admin-actions">
+        <button id="save-name-btn" type="button">Зберегти</button>
+        <span class="admin-status" id="name-status"></span>
+      </div>
+
+      <div class="admin-photo-row">
+        <div class="admin-photo-preview">
+          <img id="photo-preview" src="/static/img/pasha.jpg?v={{ photo_version }}" alt="{{ name_text }}" />
+        </div>
+        <div class="admin-actions">
+          <label class="admin-file-label" for="photo-input">Обрати фото</label>
+          <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" hidden />
+          <span class="admin-status" id="photo-status"></span>
+        </div>
+      </div>
+
       <p class="tagline">
         Цей текст визначає, як штучний інтелект поводиться в чаті з
         гостями. Пиши від першої особи — характер, звички, факти про
