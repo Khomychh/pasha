@@ -1,47 +1,47 @@
-# Паша
+# Pasha
 
-Приватний чат, де гості спілкуються з AI, що грає роль конкретної людини. Характер і факти про персону задаються окремо, через адмінку — код нічого особистого не містить.
+A private chat where guests talk to an AI playing a specific person. The persona's character and facts are set separately, through the admin page — the code itself contains nothing personal.
 
-## Локальний запуск
+## Local development
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 copy .env.example .env
-# заповнити .env: GEMINI_API_KEY, GUEST_PASSWORD, ADMIN_PASSWORD, SECRET_KEY
+# fill in .env: GEMINI_API_KEY, GUEST_PASSWORD, ADMIN_PASSWORD, SECRET_KEY
 uvicorn main:app --reload
 ```
 
-Відкрити http://127.0.0.1:8000 — гостьовий вхід, http://127.0.0.1:8000/admin/login — адмінка для редагування персони.
+Open http://127.0.0.1:8000 for guest login, and http://127.0.0.1:8000/admin/login for the admin page to edit the persona.
 
-`SECRET_KEY` згенерувати одноразово і зберігати незмінним (зміна виловить усі активні сесії):
+Generate `SECRET_KEY` once and keep it unchanged (changing it invalidates all active sessions):
 
 ```bash
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-## Деплой на Hetzner (`pasha.ivankhomych.com`)
+## Deploying to Hetzner
 
-1. **DNS**: в панелі керування `ivankhomych.com` додати A-запис `pasha` → IP Hetzner-сервера (і AAAA, якщо є IPv6).
-2. Переконатись, що на сервері відкриті порти 80 і 443 (Caddy сам отримає TLS-сертифікат через Let's Encrypt, як тільки DNS почне резолвитись).
-3. Скопіювати репозиторій на сервер (`git clone` або `scp`).
-4. Створити `.env` на сервері (`cp .env.example .env` і заповнити) — **цей файл не в git**.
-5. Запустити:
+1. **DNS**: in your domain's DNS panel, add an A record pointing your chosen subdomain/domain → the Hetzner server IP (and AAAA if you have IPv6).
+2. Make sure ports 80 and 443 are open on the server (Caddy will obtain a TLS certificate via Let's Encrypt automatically once DNS resolves).
+3. Copy the repository to the server (`git clone` or `scp`).
+4. Create `.env` on the server (`cp .env.example .env` and fill it in, including `DOMAIN`) — **this file is not in git**.
+5. Start it:
    ```bash
    docker compose up -d --build
    ```
-6. Перевірити `docker compose logs -f caddy`, поки не з'явиться підтвердження видачі сертифіката, потім відкрити https://pasha.ivankhomych.com.
+6. Check `docker compose logs -f caddy` until the certificate issuance confirmation appears, then open `https://$DOMAIN`.
 
-### Оновлення після змін коду
+### Updating after code changes
 
 ```bash
 git pull
 docker compose up -d --build
 ```
 
-Персона (текст, який редагується в `/admin`) зберігається в Docker volume `pasha_data` і **не втрачається** при оновленні/рестарті контейнера.
+The persona (text edited in `/admin`) is stored in the `pasha_data` Docker volume and **is not lost** on container update/restart.
 
-### Оновлення персони
+### Updating the persona
 
-Просто зайти на https://pasha.ivankhomych.com/admin/login з адмін-паролем і переписати текст — застосовується миттєво, без деплою.
+Just go to `https://$DOMAIN/admin/login` with the admin password and rewrite the text — it applies instantly, no deploy needed.
